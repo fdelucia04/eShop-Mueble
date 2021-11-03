@@ -33,7 +33,7 @@
         title: "Oops...",
         text: "El producto ya está agregado",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 2000,
       });
     } else {
       this.insertarCarrito(infoProducto);
@@ -145,7 +145,7 @@
               </td>
               <td id='subtotales'>${producto.precio * producto.cantidad}</td>
               <td>
-                  <a href="#" class="borrar-producto fas fa-times-circle" style="font-size:30px" data-id="${
+                  <a href="#" class="borrar-producto fas fa-times-circle" style="font-size:25px" data-id="${
                     producto.id
                   }"></a>
               </td>
@@ -173,5 +173,65 @@
   //Eliminar todos los datos del LS
   vaciarLocalStorage() {
     localStorage.clear();
+  }
+
+  //Procesar pedido
+  procesarPedido(e) {
+    e.preventDefault();
+
+    if (this.obtenerProductosLocalStorage().length === 0) {
+      Swal.fire({
+        type: "error",
+        title: "Oops...",
+        text: "El carrito está vacío, agrega algún producto",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } else {
+      location.href = "compra.html";
+    }
+  }
+
+  //Calcular montos
+  calcularTotal() {
+    let productosLS;
+    let total = 0,
+      igv = 0,
+      subtotal = 0;
+    productosLS = this.obtenerProductosLocalStorage();
+    for (let i = 0; i < productosLS.length; i++) {
+      let element = Number(productosLS[i].precio * productosLS[i].cantidad);
+      total = total + element;
+    }
+
+    igv = parseFloat(total * 0.21).toFixed(2);
+    subtotal = parseFloat(total - igv).toFixed(2);
+
+    document.getElementById("subtotal").innerHTML = "$" + subtotal;
+    document.getElementById("igv").innerHTML = "$" + igv;
+    document.getElementById("total").innerHTML = "$" + total;
+  }
+
+  obtenerEvento(e) {
+    e.preventDefault();
+    let id, cantidad, producto, productosLS;
+    if (e.target.classList.contains("cantidad")) {
+      producto = e.target.parentElement.parentElement;
+      id = producto.querySelector("a").getAttribute("data-id");
+      cantidad = producto.querySelector("input").value;
+      let actualizarMontos = document.querySelectorAll("#subtotales");
+      productosLS = this.obtenerProductosLocalStorage();
+      productosLS.forEach(function (productoLS, index) {
+        if (productoLS.id === id) {
+          productoLS.cantidad = cantidad;
+          actualizarMontos[index].innerHTML = Number(
+            cantidad * productosLS[index].precio
+          );
+        }
+      });
+      localStorage.setItem("productos", JSON.stringify(productosLS));
+    } else {
+      console.log("click afuera");
+    }
   }
 }
