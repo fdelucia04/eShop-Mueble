@@ -36,20 +36,20 @@ function procesarCompra() {
   if (compra.obtenerProductosLocalStorage().length === 0) {
     Swal.fire({
       type: "error",
-      title: "Oops...",
-      text: "No hay productos, selecciona alguno",
+      title: "Lo siento!",
+      text: "No hay productos, seleccione alguno",
       showConfirmButton: false,
-      timer: 2000,
+      timer: 3000,
     }).then(function () {
       window.location = "index.html";
     });
   } else if (cliente.value === "" || correo.value === "") {
     Swal.fire({
       type: "error",
-      title: "Oops...",
+      title: "Lo siento!",
       text: "Ingrese todos los campos requeridos",
       showConfirmButton: false,
-      timer: 2000,
+      timer: 3000,
     });
   } else {
     //aqui se coloca el user id generado en el emailJS
